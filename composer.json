@@ -1,0 +1,28 @@
+{
+    "name": "roundcube/auth_require_group_membership",
+    "license": "BSD-3-Clause",
+    "description": "Allow check AD group membership before login",
+    "type": "roundcube-plugin",
+    "authors": [
+        {
+            "name": "Andrew Seregin",
+            "email": "seregin@soho-service.ru"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://plugins.roundcube.net"
+        }
+    ],
+    "require": {
+        "roundcube/plugin-installer": ">=0.1.2"
+    },
+    "extra": {
+        "roundcube": {
+            "min-version": "1.0.0",
+            "post-install-script": "echo 'POST-INSTALL SCRIPT'",
+            "post-update-script": "echo 'POST-UPDATE SCRIPT'"
+        }
+    }
+}
