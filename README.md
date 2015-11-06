@@ -7,4 +7,4 @@ This plugin allows you to grant access for all valid users from within local net
 All parameters in config file is self-explanatory
 
 Before using it, you have to configure LDAP
-http://trac.roundcube.net/wiki/Howto_Config/Ldap
+http://trac.roundcube.net/wiki/Howto_Config/Ldap#ConfiguringRoundcube
