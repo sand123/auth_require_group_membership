@@ -9,7 +9,7 @@ All parameters in config file is self-explanatory
 
 Before using it, you have to configure LDAP http://trac.roundcube.net/wiki/Howto_Config/Ldap#ConfiguringRoundcube
 
-Plugins also allows you 
-* prefilter username with regex to check if it includes only allowed chars
-* log failed attempts with IP and timestamp to file
+This plugin also allows you 
+* pre-filter username with regex to check if it includes only allowed chars
+* log failed attempts with IP and timestamp to separate file
 * check is user exists in AD before IMAP auth attempt
