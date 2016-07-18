@@ -30,6 +30,10 @@ class auth_require_group_membership extends rcube_plugin {
             return $this->check_complete($data, true, '', 'host not in [auth_require_group_membership_server_names]');
         };
 
+        if(in_array($this->remote_addr, $this->rc->config->get('auth_require_group_membership_whitelist'))){
+            return $this->check_complete($data, true, '', 'remote host in [auth_require_group_membership_whitelist]');
+        };
+
         $this->write_log('authenticating on ' . $this->server_name . ' for [' . $data['user']. '] from ' . $this->remote_addr);
 
         $user = trim(strtolower($data['user']));

@@ -2,10 +2,13 @@
 
 // use this global config [ldap_public] id for account lookup in LDAP catalog - bind_dn, root, etc
 // ID matches [public] in tutorial http://trac.roundcube.net/wiki/Howto_Config/Ldap#ConfiguringRoundcube
-$config['auth_require_group_membership_public_ldap'] = 'mydomain';
+$config['auth_require_group_membership_public_ldap'] = 'local_users';
 
 // check for this site names only, for any other - always allowed
 $config['auth_require_group_membership_server_names'] = ['mail.mydomain.com'];
+
+// skip these IP list - always allowed
+$config['auth_require_group_membership_whitelist'] = ['8.8.8.8'];
 
 // required group distinguishedName
 $config['auth_require_group_membership_required_dn'] = 'CN=AllowPublicWebMail,CN=Users,DC=domain,DC=local';
