@@ -128,7 +128,7 @@ class auth_require_group_membership extends rcube_plugin {
         $user = isset($data['user']) ? $data['user'] : 'NOT_SET';
         $host = isset($data['host']) ? $data['host'] : 'NOT_SET';
         $code = isset($data['code']) ? $data['code'] : 'NOT_SET';
-        $this->rc->write_log($this->rc->config->get('auth_require_group_membership_login_log') || $this->log_file, "FAILED LOGIN for $user at host $host, reason: $code");
+        $this->rc->write_log($this->rc->config->get('auth_require_group_membership_login_log'), "FAILED LOGIN for $user at host $host, reason: $code");
         return true;
     }
 }
