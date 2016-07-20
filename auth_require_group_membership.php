@@ -19,7 +19,7 @@ class auth_require_group_membership extends rcube_plugin {
         $this->server_name = strtolower(getenv('HTTP_HOST'));
         $this->remote_addr = getenv('REMOTE_ADDR');
         $this->add_hook('authenticate', array($this, 'before_login'));
-        $this->add_hook('login_failed', array($this, 'notify_failed'));
+        $this->add_hook('login_failed', array($this, 'on_login_failed'));
     }
 
     function before_login($data){
@@ -122,6 +122,11 @@ class auth_require_group_membership extends rcube_plugin {
     function debug_ldap($level, $msg){
         $msg = implode("\n", $msg);
         $this->write_log($msg);
+    }
+
+    function on_login_failed($host, $user, $fail_code){
+        $this->rc->write_log($this->rc->config->get('auth_require_group_membership_login_log'), "FAILED LOGIN for $user at host $host, reason: $fail_code");
+        return true;
     }
 }
 ?>
