@@ -125,7 +125,7 @@ class auth_require_group_membership extends rcube_plugin {
     }
 
     function on_login_failed($host, $user, $fail_code){
-        $this->rc->write_log($this->rc->config->get('auth_require_group_membership_login_log'), "FAILED LOGIN for $user at host $host, reason: $fail_code");
+        $this->rc->write_log($this->rc->config->get('auth_require_group_membership_login_log') || $this->log_file, "FAILED LOGIN for $user at host $host, reason: $fail_code");
         return true;
     }
 }
