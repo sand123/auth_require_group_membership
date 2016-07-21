@@ -26,6 +26,6 @@ $config['auth_require_group_membership_login_log'] = 'webmail_logins.log';
 $config['auth_require_group_membership_debug_log'] = 'webmail_auth_debug.log';
 
 // use this regex to prefilter username. Leave empty if not required
-$config['auth_require_group_membership_username_regexp_filter'] = '/[^a-zA-Zа-яА-Я0-9]/ui';
+$config['auth_require_group_membership_username_regexp_filter'] = '/[^a-zA-Zа-яА-Я0-9.]/i';
 
 ?>
