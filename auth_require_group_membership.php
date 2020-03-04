@@ -61,8 +61,9 @@ class auth_require_group_membership extends rcube_plugin {
         $this->ldap = new Net_LDAP3(array(
             'hosts' => $this->ldap_config['hosts'],
             'port'  => isset($this->ldap_config['port']) ? $this->ldap_config['port'] : 389,
-            'use_tls' => false,
+            'use_tls' => $this->ldap_config['use_tls'],
             'ldap_version'  => 3,
+            'auth_method' => $this->ldap_config['auth_method'],
             'service_bind_dn' => $this->ldap_config['bind_dn'],
             'service_bind_pw' => $this->ldap_config['bind_pass'],
             'root_dn'         => $this->ldap_config['base_dn'],
@@ -81,11 +82,21 @@ class auth_require_group_membership extends rcube_plugin {
 
         $this->write_log('searching LDAP for ' . $user);
 
-        if(!$this->ldap->bind($this->ldap_config['bind_dn'], $this->ldap_config['bind_pass'])){
-            $this->write_log('bind LDAP failed');
-            return $this->check_complete($data, false, $this->rc->config->get('auth_require_group_membership_msg_on_server_error'), 'LDAP bind failed');
-        };
-
+        if($this->ldap_config['auth_cid'] !== ''){
+            $this->write_log('SASL bind ' . $this->ldap_config['auth_cid']);
+            if(!$this->ldap->sasl_bind($this->ldap_config['auth_cn'], $this->ldap_config['bind_pass'], $this->ldap_config['auth_cid'])){
+                $this->write_log('bind LDAP failed');
+                return $this->check_complete($data, false, $this->rc->config->get('auth_require_group_membership_msg_on_server_error'), 'SASL LDAP bind failed');
+            } else {
+                $this->write_log('bind succeeded');
+            };
+        } else {
+            $this->write_log('plain LDAP bind ' . $this->ldap_config['auth_cid']);
+            if(!$this->ldap->bind($this->ldap_config['bind_dn'], $this->ldap_config['bind_pass'])){
+                $this->write_log('bind LDAP failed');
+                return $this->check_complete($data, false, $this->rc->config->get('auth_require_group_membership_msg_on_server_error'), 'LDAP bind failed');
+            };
+        }
         $found = $this->ldap->search(
             $this->ldap_config['base_dn'],
             '(&(sAMAccountName=' . $user . ')(memberOf=' . $this->rc->config->get('auth_require_group_membership_required_dn') . ')(!(userAccountControl:1.2.840.113556.1.4.803:=2)))',
