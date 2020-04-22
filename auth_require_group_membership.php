@@ -84,6 +84,9 @@ class auth_require_group_membership extends rcube_plugin {
 
         if($this->ldap_config['auth_cid'] !== ''){
             $this->write_log('SASL bind ' . $this->ldap_config['auth_cid']);
+			/* U-TERM
+			 if(!$this->ldap->sasl_bind($this->ldap_config['auth_cid'], $this->ldap_config['bind_pass'], $this->ldap_config['bind_dn'])){
+			*/
             if(!$this->ldap->sasl_bind($this->ldap_config['auth_cn'], $this->ldap_config['bind_pass'], $this->ldap_config['auth_cid'])){
                 $this->write_log('bind LDAP failed');
                 return $this->check_complete($data, false, $this->rc->config->get('auth_require_group_membership_msg_on_server_error'), 'SASL LDAP bind failed');
