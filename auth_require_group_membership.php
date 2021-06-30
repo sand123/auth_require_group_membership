@@ -10,6 +10,7 @@ class auth_require_group_membership extends rcube_plugin {
     private $ldap_connected = false;
     private $server_name;
     private $remote_addr;
+    private $is_local;
     private $log_file;
 
     function init(){
@@ -18,6 +19,7 @@ class auth_require_group_membership extends rcube_plugin {
         $this->log_file = $this->rc->config->get('auth_require_group_membership_debug_log');
         $this->server_name = strtolower(getenv('HTTP_HOST'));
         $this->remote_addr = getenv('REMOTE_ADDR');
+        $this->is_local = substr($this->remote_addr,0,4) === "192." || substr($this->remote_addr,0,3) === "10.";
         $this->add_hook('authenticate', array($this, 'before_login'));
         $this->add_hook('login_failed', array($this, 'on_login_failed'));
     }
@@ -30,11 +32,7 @@ class auth_require_group_membership extends rcube_plugin {
             return $this->check_complete($data, true, '', 'host not in [auth_require_group_membership_server_names]');
         };
 
-        if(in_array($this->remote_addr, $this->rc->config->get('auth_require_group_membership_whitelist'))){
-            return $this->check_complete($data, true, '', 'remote host in [auth_require_group_membership_whitelist]');
-        };
-
-        $this->write_log('authenticating on ' . $this->server_name . ' for [' . $data['user']. '] from ' . $this->remote_addr);
+        $this->write_log('authenticating on ' . $this->server_name . ' for [' . $data['user']. '] from ' . $this->remote_addr . ($this->is_local ? " (local connection)" : ""));
 
         $user = trim(strtolower($data['user']));
 
@@ -43,6 +41,10 @@ class auth_require_group_membership extends rcube_plugin {
         if(($filter != '') && (preg_replace($filter, '', $user ) !== $user)){
             $this->write_log('username does not match regex filter');
             return $this->check_complete($data, false, $this->rc->config->get('auth_require_group_membership_msg_on_deny'), 'username regex mismatch');
+        };
+
+        if(in_array($this->remote_addr, $this->rc->config->get('auth_require_group_membership_whitelist'))){
+            return $this->check_complete($data, true, '', 'remote host in [auth_require_group_membership_whitelist]');
         };
 
         $this->write_log('trying LDAP connection');
@@ -102,7 +104,7 @@ class auth_require_group_membership extends rcube_plugin {
         }
         $found = $this->ldap->search(
             $this->ldap_config['base_dn'],
-            '(&(sAMAccountName=' . $user . ')(memberOf=' . $this->rc->config->get('auth_require_group_membership_required_dn') . ')(!(userAccountControl:1.2.840.113556.1.4.803:=2)))',
+            '(&(sAMAccountName=' . $user . ')' . (!$this->is_local ? '(memberOf=' . $this->rc->config->get('auth_require_group_membership_required_dn') . ')': '') .  '(!(userAccountControl:1.2.840.113556.1.4.803:=2)))',
             'sub',
             array('distinguishedName'),
             array(),
