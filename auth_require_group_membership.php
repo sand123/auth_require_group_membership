@@ -104,7 +104,7 @@ class auth_require_group_membership extends rcube_plugin {
         }
         $found = $this->ldap->search(
             $this->ldap_config['base_dn'],
-            '(&(sAMAccountName=' . $user . ')' . (!$this->is_local ? '(memberOf=' . $this->rc->config->get('auth_require_group_membership_required_dn') . ')': '') .  '(!(userAccountControl:1.2.840.113556.1.4.803:=2)))',
+            '(&(sAMAccountName=' . $user . ')' . (!$this->is_local && $this->rc->config->get('auth_require_group_membership_required_dn') !== "" ? '(memberOf=' . $this->rc->config->get('auth_require_group_membership_required_dn') . ')': '') .  '(!(userAccountControl:1.2.840.113556.1.4.803:=2)))',
             'sub',
             array('distinguishedName'),
             array(),
